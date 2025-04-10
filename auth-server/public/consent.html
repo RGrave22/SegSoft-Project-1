@@ -1,13 +1,23 @@
+<!-- views/consent.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Consent</title>
+  <title>Authorize Access</title>
 </head>
 <body>
-<h1>Consent Page</h1>
-<p>Do you approve the permissions requested by the client app?</p>
-<a href="/approve">Approve</a>
+<h1>Authorization Request</h1>
+<p><strong>{{client_id}}</strong> is requesting access to your account.</p>
+
+<form action="/approve" method="POST">
+  <input type="hidden" name="client_id" value="{{client_id}}">
+  <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
+  <input type="hidden" name="state" value="{{state}}">
+  <button type="submit">Approve</button>
+</form>
+
+<form action="/deny" method="POST">
+  <button type="submit">Deny</button>
+</form>
 </body>
 </html>
