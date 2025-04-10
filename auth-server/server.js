@@ -14,7 +14,7 @@ const db = new sqlite3.Database(':memory:');
 const port = 9000;
 
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname,'public')));
 
 routes(app, db);
 
