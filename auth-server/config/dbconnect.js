@@ -34,7 +34,16 @@ const init = db.serialize(() => {
     redirectUri TEXT NOT NULL,
     developerEmail TEXT
   )`);
-});
+
+  db.run(`CREATE TABLE IF NOT EXISTS authorizationCode (
+  code TEXT PRIMARY KEY,
+  client_id TEXT NOT NULL,
+  redirect_uri TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  expires_at INTEGER NOT NULL)`);
+ 
+}
+);
 
 
 db.all("SELECT * FROM user", (err, rows) => {
@@ -52,6 +61,16 @@ db.all("SELECT * FROM user", (err, rows) => {
      console.log(rows); 
    }
  });
+
+ db.all("SELECT * FROM authorizationCodes", (err, rows) => {
+   if (err) {
+     console.error("Erro ao obter dados", err.message);
+   } else {
+     console.log(rows); 
+   }
+ });
+
+
 
 
 export {db,init};

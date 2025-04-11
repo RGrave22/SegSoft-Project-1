@@ -1,6 +1,8 @@
 import {db} from "../config/dbconnect.js";
 import bcrypt  from "bcryptjs";
 import jwt from "jsonwebtoken";
+import session from "express-session";
+
 
 
 const register = async(req,res) => {
@@ -26,45 +28,46 @@ const register = async(req,res) => {
    }
 }
 
-const login = async (req, res) =>{
+const login = async (req, res) => {
+   const { email, password,} = req.body;
+   const { client_id, redirect_uri } = req.session;
+ 
+   console.log(client_id);
+   console.log(redirect_uri);
 
-   const {email, password} = req.body;
-
-   
-   if(!email || !password){
-      return res.status(401).json({error: "Missing email or password"});
+   if (!email || !password || !client_id || !redirect_uri) {
+     return res.status(401).json({ error: "Missing required fields (email, password, client_id, redirect_uri)" });
    }
-
-   const sql = "Select * FROM user Where email = ?";
-   db.get(sql,[email], async(err,row)=>{
-      if(err){
-         console.error(err);
-         return res.status(401).json({error: "Database Error"});
-      }
-      if(!row){
-         return res.status(401).json({error:"Invalid Credentials"});
-      }
-
-      const match = await bcrypt.compare(password, row.password);
-
-      if(!match){
-         return res.status(401).json({error:"Invalid Crendentials"});
-      }
-
-      
-
-      const token = jwt.sign(
-         {email: row.email},
-         process.env.JWT_SECRET,
-         {expiresIn: process.env.EXPIRES_IN_JWT || "1h"}
-      );
-      console.log(token);
-
-      return res.json({
-         message:"Login Successful",
-         token,
-      });
+ 
+   const sql = "SELECT * FROM user WHERE email = ?";
+   db.get(sql, [email], async (err, row) => {
+     if (err) {
+       console.error(err);
+       return res.status(401).json({ error: "Database Error" });
+     }
+     if (!row) {
+       return res.status(401).json({ error: "Invalid Credentials" });
+     }
+ 
+     const match = await bcrypt.compare(password, row.password);
+     if (!match) {
+       return res.status(401).json({ error: "Invalid Credentials" });
+     }
+ 
+     // Geração do token JWT
+     const token = jwt.sign(
+       { email: row.email },
+       process.env.JWT_SECRET,
+       { expiresIn: process.env.EXPIRES_IN_JWT || "1h" }
+     );
+     console.log(token);
+ 
+     // Redirecionamento para a página de consentimento com parâmetros dinâmicos
+   //   return res.redirect(`/consent?client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}`);
+         return res.redirect(`/consent`);
    });
-}
+ };
+ 
+
 
 export{register, login};
