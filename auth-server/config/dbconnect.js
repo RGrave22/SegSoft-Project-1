@@ -45,4 +45,13 @@ db.all("SELECT * FROM user", (err, rows) => {
    }
  });
 
+ db.all("SELECT * FROM client", (err, rows) => {
+   if (err) {
+     console.error("Erro ao obter dados", err.message);
+   } else {
+     console.log(rows); 
+   }
+ });
+
+
 export {db,init};

@@ -4,6 +4,8 @@ import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcryptjs";
 import { register, login } from "./controllers/authController.js";
+import { registerClient, /**loginClient **/} from "./controllers/clientController.js";
+
 import verifyToken from "./middlewares/authMiddleware.js";
 import jwt from "jsonwebtoken";
 import { db } from "./config/dbconnect.js";
@@ -36,35 +38,8 @@ router.get("/authorize", (req, res) => {
 });
 
 // Registo de aplicações (clientes OAuth)
-router.post("/register-client", (req, res) => {
-  const { appName, redirectUri, developerEmail } = req.body;
-
-  if (!appName || !redirectUri) {
-    return res.status(400).json({ message: "App Name e Redirect URI são obrigatórios." });
-  }
-
-  const clientId = appName + "." + uuidv4();
-  const clientSecretPlain = uuidv4();
-  const clientSecretHash = bcrypt.hashSync(clientSecretPlain, 10);
-
-  const sql = `
-    INSERT INTO clients (clientId, clientSecret, appName, redirectUri, developerEmail)
-    VALUES (?, ?, ?, ?, ?)
-  `;
-
-  db.run(sql, [clientId, clientSecretHash, appName, redirectUri, developerEmail], function (err) {
-    if (err) {
-      console.error("Erro ao registar aplicação:", err.message);
-      return res.status(500).json({ message: "Erro ao registar aplicação." });
-    }
-
-    return res.status(201).json({
-      message: "Aplicação registada com sucesso.",
-      clientId,
-      clientSecret: clientSecretPlain, // Mostrado uma vez
-    });
-  });
-});
+router.post("/register-client",registerClient );
+//router.post("/login-client",loginClient);
 
 // Endpoint de token (simples)
 router.post("/token", (req, res) => {
@@ -75,10 +50,5 @@ router.post("/token", (req, res) => {
   res.json({ accessToken });
 });
 
-function generateJWT(email) {
-  return jwt.sign({ email }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRATION || "1h",
-  });
-}
 
 export default router;
