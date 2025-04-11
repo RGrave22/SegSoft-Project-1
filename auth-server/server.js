@@ -1,23 +1,29 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const OAuth2Strategy = require('passport-oauth2');
-const bodyParser = require('body-parser');
-const passport = require('passport');
-const dotenv = require('dotenv');
-const routes = require('./routes');
-const path = require("node:path");
-const sqlite3 = require('sqlite3').verbose();
+import express from 'express';
+import dotenv from 'dotenv';
+import passport from 'passport';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import router from './routes.js'; 
+import { db } from './config/dbconnect.js';
+
+
 
 const app = express();
-const db = new sqlite3.Database(':memory:');
-const port = 9000;
+const port = process.env.PORT || 9000;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-app.use(express.static(path.join(__dirname,'public')));
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-routes(app, db);
+// Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Usa o router
+app.use("/", router);
 
 app.listen(port, () => {
-    console.log(`Authorization Server running at http://localhost:9000`);
+  console.log(`Authorization Server running at http://localhost:${port}`);
 });

@@ -1,82 +1,84 @@
-const jwt = require('jsonwebtoken');
-const express = require('express');
-const path = require('node:path');
-const { v4: uuidv4 } = require('uuid');
-const bcrypt = require('bcryptjs');
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import { v4 as uuidv4 } from "uuid";
+import bcrypt from "bcryptjs";
+import { register, login } from "./controllers/authController.js";
+import verifyToken from "./middlewares/authMiddleware.js";
+import jwt from "jsonwebtoken";
+import { db } from "./config/dbconnect.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const app = express();
+const router = express.Router();
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Rotas públicas
+router.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "client-app-register.html"));
+});
 
+router.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "login.html"));
+});
 
+router.get("/register", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "register.html"));
+});
 
-module.exports = (app,db) => {
+router.post("/login", login);
+router.post("/register", register);
 
-    db.serialize(() => {
-        db.run("CREATE TABLE IF NOT EXISTS users (userId INTEGER PRIMARY KEY, username TEXT, passwor TEXT)");
-        db.run("CREATE TABLE IF NOT EXISTS clients (clientId INTEGER PRIMARY KEY, appName TEXT, clientSecret TEXT)");
+// Página de consentimento
+router.get("/authorize", (req, res) => {
+  // Aqui poderás validar sessão ou JWT
+  res.sendFile(path.join(__dirname, "public", "consent.html"));
+});
+
+// Registo de aplicações (clientes OAuth)
+router.post("/register-client", (req, res) => {
+  const { appName, redirectUri, developerEmail } = req.body;
+
+  if (!appName || !redirectUri) {
+    return res.status(400).json({ message: "App Name e Redirect URI são obrigatórios." });
+  }
+
+  const clientId = appName + "." + uuidv4();
+  const clientSecretPlain = uuidv4();
+  const clientSecretHash = bcrypt.hashSync(clientSecretPlain, 10);
+
+  const sql = `
+    INSERT INTO clients (clientId, clientSecret, appName, redirectUri, developerEmail)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  db.run(sql, [clientId, clientSecretHash, appName, redirectUri, developerEmail], function (err) {
+    if (err) {
+      console.error("Erro ao registar aplicação:", err.message);
+      return res.status(500).json({ message: "Erro ao registar aplicação." });
+    }
+
+    return res.status(201).json({
+      message: "Aplicação registada com sucesso.",
+      clientId,
+      clientSecret: clientSecretPlain, // Mostrado uma vez
     });
+  });
+});
 
-    app.get('/', (req, res) => {
-        res.sendFile(path.join(__dirname, 'public', 'client-app-register.html'));
-    });
+// Endpoint de token (simples)
+router.post("/token", (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: "Email em falta." });
 
-    app.get('/authorize', (req, res) => {
-        if(!req.user) {
-            return res.redirect('/login');
-        }
+  const accessToken = generateJWT(email);
+  res.json({ accessToken });
+});
 
-        //GPT
-        //const { client_id, redirect_uri, state } = req.query;
-        //req.session.authRequest = { client_id, redirect_uri, state };
-
-        //GPT
-        res.sendFile(path.join(__dirname, 'public', 'consent.html'));
-    });
-
-
-    app.post('/token', (req, res) => {
-        const username = req.body;
-
-        const accessToken = generateJWT(username);
-        res.json({accessToken});
-    });
-
-    app.get('/login', (req, res) => {
-        res.sendFile(path.join(__dirname, 'public', 'login.html'));
-    });
-
-    app.post('/login', (req, res) => {
-        const {username, password} = req.body;
-    });
-
-    app.post('/register-client', (req, res) => {
-        const {app_name, redirect_uri, developer_email} = req.body;
-
-        if (!app_name || !redirect_uri) {
-            return res.status(400).json({ message: 'App Name and Redirect URL are required' });
-        }
-
-
-        const clientId = app_name + "." + uuidv4();
-        const clientSecretBeforeHash = uuidv4();
-
-        const clientSecretHashed = bcrypt.hashSync(clientSecretBeforeHash, 10);
-
-
-
-    });
-
-
-};
-
-
-function generateJWT(username) {
-    const expTime = process.env.JWT_EXPIRATION;
-    const secret = process.env.JWT_SECRET;
-
-    return jwt.sign({userId: username}, secret, {expiresIn: expTime});
+function generateJWT(email) {
+  return jwt.sign({ email }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRATION || "1h",
+  });
 }
 
-
+export default router;
