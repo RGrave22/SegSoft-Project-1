@@ -1,59 +1,92 @@
 import jwt from "jsonwebtoken";
+import { db } from "../config/dbconnect.js";
 
-const verifyToken = (req,res,next) =>{
+/**
+const verifyToken = (req, res, next) => {
    const authHeader = req.headers.authorization;
-
-   if(authHeader && authHeader.startsWIth("Bearer")){
-      const token = authHeader.split(" ")[1];
-
-      if(!token){
-         return res.status(401).json({message: "No token providad"});
-      }
-
-      try {
-         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-         req.user = decoded;
-         console.log("The user is", req.user);
-         next();
-      } catch (error) {
-         return res.status(400).json({message:"Invalid Token"});
-      }
-   }else {
-      return res.status(401).json({message:"Auth header missing or malformed"});
+ 
+   if (authHeader && authHeader.startsWith("Bearer ")) {
+     const token = authHeader.split(" ")[1];
+ 
+     if (!token) {
+       return res.status(401).json({ message: "No token provided" });
+     }
+ 
+     try {
+       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+       req.user = decoded;
+       console.log("The user is", req.user);
+       next();
+     } catch (error) {
+       return res.status(400).json({ message: "Invalid Token" });
+     }
+   } else {
+     return res.status(401).json({ message: "Auth header missing or malformed" });
    }
-}
+ };
+  */
 
-const tokenExchange = (req, res) => {
-   const { code, client_id, client_secret } = req.body;
+ const handleTokenRequest = (req, res) => {
+  const { grant_type, code, redirect_uri } = req.body;
 
-   // Verificar se o código existe
-   const sql = "SELECT * FROM authorizationCode WHERE code = ?";
-   db.get(sql, [code], (err, row) => {
-      if (err) {
-         console.error(err);
-         return res.status(500).send("Erro ao buscar código de autorização.");
-      }
-      if (!row) {
-         return res.status(400).send("Código de autorização inválido.");
-      }
+  // Extrair client_id e client_secret do cabeçalho Authorization
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith("Basic ")) {
+    return res.status(401).json({ error: "invalid_client" });
+  }
 
-      // Verificar se o client_id e client_secret correspondem
-      if (row.clientId !== client_id || row.clientSecret !== client_secret) {
-         return res.status(400).send("Credenciais do cliente inválidas.");
-      }
+  const base64Credentials = auth.split(" ")[1];
+  const credentials = Buffer.from(base64Credentials, "base64").toString("ascii");
+  const [client_id, client_secret] = credentials.split(":");
 
-      // Gerar o token de acesso (access token)
-      const accessToken = jwt.sign(
-         { client_id: row.clientId, user_id: row.userId },
-         process.env.JWT_SECRET,
-         { expiresIn: "1h" }
-      );
+  console.log("Client ID:", client_id);
+  console.log("Redirect URI:", redirect_uri);
 
-      // Retornar o token de acesso
-      res.json({ access_token: accessToken });
-   });
+  if (grant_type !== "authorization_code") {
+    return res.status(400).json({ error: "unsupported_grant_type" });
+  }
+
+  if (!code || !redirect_uri || !client_id || !client_secret) {
+    return res.status(400).json({ error: "invalid_request" });
+  }
+
+  const sql = `
+    SELECT * FROM authorizationCode
+    WHERE code = ? AND client_id = ? AND redirect_uri = ?
+  `;
+
+  db.get(sql, [code, client_id, redirect_uri], (err, row) => {
+    if (err) {
+      console.error("Erro ao procurar código:", err.message);
+      return res.status(500).json({ error: "server_error" });
+    }
+
+    if (!row) {
+      return res.status(400).json({ error: "invalid_grant" });
+    }
+
+    const createdAt = new Date(row.createdAt);
+    const expiresIn = row.expiresIn || 600; 
+    const now = new Date();
+    if ((now - createdAt) / 1000 > expiresIn) {
+      return res.status(400).json({ error: "expired_code" });
+    }
+
+    const payload = {
+      sub: row.userId,
+      client_id: row.client_id,
+    };
+
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.EXPIRES_IN_JWT || "1h",
+    });
+
+    return res.json({
+      access_token: accessToken,
+      token_type: "Bearer",
+      expires_in: 3600,
+    });
+  });
 };
 
-
-
-export default verifyToken;
+ export { handleTokenRequest };

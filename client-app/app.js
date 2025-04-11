@@ -15,10 +15,11 @@ passport.use('oauth2', new OAuth2Strategy({
     clientSecret: 'my-client-secret',
     callbackURL: 'http://localhost:3000/callback',
 }, (accessToken, refreshToken, profile, cb) => {
-    console.log('Access Token:', accessToken);
+  console.log('Access Token:', accessToken);
+  console.log('Refresh Token:', refreshToken);
+  console.log('Profile:', profile);
     return cb(null, profile);
 }));
-
 
 app.get('/auth', passport.authenticate('oauth2'));
 
@@ -33,6 +34,7 @@ app.get('/callback',
       session: false
     }),
     (req, res) => {
+      console.log('Authenticated user:', req.user);
       // Successful authentication
       res.send('Login successful');
     }

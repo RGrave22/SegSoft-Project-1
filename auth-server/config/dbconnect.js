@@ -39,8 +39,10 @@ const init = db.serialize(() => {
   code TEXT PRIMARY KEY,
   client_id TEXT NOT NULL,
   redirect_uri TEXT NOT NULL,
-  user_id TEXT NOT NULL,
-  expires_at INTEGER NOT NULL)`);
+  userId TEXT NOT NULL,
+  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+  expiresIn INTEGER DEFAULT 600)`);
+  //client_id e redirect_uri tem de ser assim para receber os dados corretamente
  
 }
 );
@@ -62,7 +64,7 @@ db.all("SELECT * FROM user", (err, rows) => {
    }
  });
 
- db.all("SELECT * FROM authorizationCodes", (err, rows) => {
+ db.all("SELECT * FROM authorizationCode", (err, rows) => {
    if (err) {
      console.error("Erro ao obter dados", err.message);
    } else {

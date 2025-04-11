@@ -9,6 +9,9 @@ const renderConsentPage = (req, res) => {
     return res.status(400).send("Missing client_id or redirect_uri");
   }
 
+  req.session.client_id = client_id;
+  req.session.redirect_uri = redirect_uri;
+  req.session.state = state;
 
   res.render("consent", {
     client_id,
@@ -17,31 +20,42 @@ const renderConsentPage = (req, res) => {
   });
 };
 
-const approveAuthorization = async (req, res) => {
-  const { client_id, redirect_uri } = req.session;
+const approveAuthorization = (req, res) => {
+  const { client_id, redirect_uri, state } = req.session;
 
-  const code = uuidv4();
+  if (!client_id || !redirect_uri) {
+    return res.status(400).send("Missing session info (clientId or redirectUri)");
+  }
 
-  // devemos presistir o redirectUrl??
+  // Verificar se o utilizador está autenticado
+  if (!req.session.user) {
+    return res.status(401).send("User not authenticated.");
+  }
+
+  const code = uuidv4(); 
+  const userId = req.session.user.email; // Agora `userId` será o email do utilizador
+
   const sql = `
-    INSERT INTO authorizationCode (code, clientId, clientSecret)
-    VALUES (?, ?, ?)
+    INSERT INTO authorizationCode (code, client_id, redirect_uri, userId)
+    VALUES (?, ?, ?, ?)
   `;
-  const userId = req.user?.email || "anonymous"; 
 
   db.run(sql, [code, client_id, redirect_uri, userId], (err) => {
     if (err) {
       console.error("Erro ao guardar código:", err.message);
       return res.status(500).send("Erro ao guardar o código de autorização.");
     }
+     
 
     const redirectUrl = new URL(redirect_uri);
     redirectUrl.searchParams.set("code", code);
     if (state) redirectUrl.searchParams.set("state", state);
-    
-    res.redirect(redirectUrl.toString());
+
+    return res.redirect(redirectUrl.toString());
   });
 };
+
+
 
 const denyAuthorization = (req, res) => {
   res.status(403).send("Access denied by user.");

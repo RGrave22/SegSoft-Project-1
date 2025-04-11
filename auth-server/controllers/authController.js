@@ -54,6 +54,10 @@ const login = async (req, res) => {
        return res.status(401).json({ error: "Invalid Credentials" });
      }
  
+     req.session.user = {
+      email: row.email,
+    };
+
      // Geração do token JWT
      const token = jwt.sign(
        { email: row.email },
