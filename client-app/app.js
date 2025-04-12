@@ -44,8 +44,6 @@ app.get('/callback',
   );
 
 
-
-
 app.use(express.static(path.join(__dirname, 'www')));
 
 app.listen(port, () => {

@@ -46,7 +46,6 @@ const approveAuthorization = (req, res) => {
       console.error("Erro ao guardar código:", err.message);
       return res.status(500).send("Erro ao guardar o código de autorização.");
     }
-     
 
     const redirectUrl = new URL(redirect_uri);
     redirectUrl.searchParams.set("code", code);
