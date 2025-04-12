@@ -39,8 +39,32 @@ const registerClient = async(req, res) =>{
    });
 }
 
-//const loginClient
+
+function validateIdAndUrl (client_id, redirect_uri){
+  return new Promise((resolve, reject) =>{
+    db.get('SELECT * FROM client WHERE clientId = ? AND redirectUri = ?', 
+      [client_id, redirect_uri], (err, row) => {
+
+      if (err) {
+
+        console.error(err.message);
+        return reject(err);
+
+      } else if (row) {
+      
+        return resolve(true);
+
+      } else {
+
+        return resolve(false);
+
+      }
+
+    });
+  }); 
+  
+}
 
 export{registerClient, 
-   //loginClient
+   validateIdAndUrl
 }; 

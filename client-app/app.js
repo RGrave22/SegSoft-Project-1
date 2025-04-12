@@ -11,8 +11,10 @@ const port = 3000;
 passport.use('oauth2', new OAuth2Strategy({
     authorizationURL: 'http://localhost:9000/authorize',
     tokenURL: 'http://localhost:9000/token',
-    clientID: 'my-client-id',
-    clientSecret: 'my-client-secret',
+    // clientID: 'my-client-id',
+    clientID: 'asasas.26a30d78-299c-46e7-bc3b-0d42fcc1723b',
+    // clientSecret: 'my-client-secret',
+    clientSecret : '4082eaa2-c866-4742-9ebc-313aa6c10a68',
     callbackURL: 'http://localhost:3000/callback',
 }, (accessToken, refreshToken, profile, cb) => {
       console.log('Access Token:', accessToken);

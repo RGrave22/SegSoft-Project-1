@@ -15,10 +15,7 @@ const register = async(req,res) => {
             console.error(err);
             return res.status(400).json({error:err.message});
          }
-         return res.status(201).json({
-            id:this.lastId,
-            email,
-         });
+         return res.redirect(`/login`);
 
       });
    
@@ -41,34 +38,34 @@ const login = async (req, res) => {
  
    const sql = "SELECT * FROM user WHERE email = ?";
    db.get(sql, [email], async (err, row) => {
-     if (err) {
-       console.error(err);
-       return res.status(401).json({ error: "Database Error" });
-     }
-     if (!row) {
-       return res.status(401).json({ error: "Invalid Credentials" });
-     }
+      if (err) {
+        console.error(err);
+        return res.status(401).json({ error: "Database Error" });
+      }
+      if (!row) {
+        return res.status(401).json({ error: "Invalid Credentials" });
+      }
  
-     const match = await bcrypt.compare(password, row.password);
-     if (!match) {
-       return res.status(401).json({ error: "Invalid Credentials" });
-     }
+      const match = await bcrypt.compare(password, row.password);
+      if (!match) {
+        return res.status(401).json({ error: "Invalid Credentials" });
+      }
  
-     req.session.user = {
-      email: row.email,
-    };
+      req.session.user = {
+        email: row.email,
+      };
 
      // Geração do token JWT
-     const token = jwt.sign(
-       { email: row.email },
-       process.env.JWT_SECRET,
-       { expiresIn: process.env.EXPIRES_IN_JWT || "1h" }
-     );
-     console.log(token);
+    //  const token = jwt.sign(
+    //    { email: row.email },
+    //    process.env.JWT_SECRET,
+    //    { expiresIn: process.env.EXPIRES_IN_JWT || "1h" }
+    //  );
+    //  console.log(token);
  
      // Redirecionamento para a página de consentimento com parâmetros dinâmicos
    //   return res.redirect(`/consent?client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}`);
-         return res.redirect(`/consent`);
+      return res.redirect(`/consent`);
    });
  };
  

@@ -51,7 +51,7 @@ const approveAuthorization = (req, res) => {
     redirectUrl.searchParams.set("code", code);
     if (state) redirectUrl.searchParams.set("state", state);
 
-    console.log("Redirecionando");
+    console.log("Redirecting");
     console.log(redirectUrl);
 
     return res.redirect(redirectUrl.toString());
