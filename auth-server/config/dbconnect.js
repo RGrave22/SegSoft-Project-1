@@ -40,7 +40,7 @@ const init = db.serialize(() => {
   client_id TEXT NOT NULL,
   redirect_uri TEXT NOT NULL,
   userId TEXT NOT NULL,
-  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+  createdAt DATETIME NOT NULL,
   expiresIn INTEGER DEFAULT 600)`);
   //client_id e redirect_uri tem de ser assim para receber os dados corretamente
  

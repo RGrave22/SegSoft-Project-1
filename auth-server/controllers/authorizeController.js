@@ -34,13 +34,14 @@ const approveAuthorization = (req, res) => {
 
   const code = uuidv4(); 
   const userId = req.session.user.email; // Agora `userId` será o email do utilizador
+  const date = new Date();
 
   const sql = `
-    INSERT INTO authorizationCode (code, client_id, redirect_uri, userId)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO authorizationCode (code, client_id, redirect_uri, userId, createdAt)
+    VALUES (?, ?, ?, ?, ?)
   `;
 
-  db.run(sql, [code, client_id, redirect_uri, userId], (err) => {
+  db.run(sql, [code, client_id, redirect_uri, userId, date], (err) => {
     if (err) {
       console.error("Erro ao guardar código:", err.message);
       return res.status(500).send("Erro ao guardar o código de autorização.");
@@ -50,6 +51,9 @@ const approveAuthorization = (req, res) => {
     const redirectUrl = new URL(redirect_uri);
     redirectUrl.searchParams.set("code", code);
     if (state) redirectUrl.searchParams.set("state", state);
+
+    console.log("Redirecionando");
+    console.log(redirectUrl);
 
     return res.redirect(redirectUrl.toString());
   });
