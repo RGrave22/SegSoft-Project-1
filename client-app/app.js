@@ -20,12 +20,15 @@ router.use(session({
     cookie: { secure: false }
 }));
 
-// Configuração do OAuth2   
+/**
+ * To use the app you have to sign up your app first on '/', get your clientID and clientSecret 
+ * and change them here in this passport method, after that you can sign up and login without any problem to get your acessToken      
+ */
 passport.use('oauth2', new OAuth2Strategy({
     authorizationURL: 'http://localhost:9000/authorize',
     tokenURL: 'http://localhost:9000/token',
-    clientID: 'asasas.f9ad9721-fcc1-48f6-929f-1d718db3bf11',
-    clientSecret : '0bd8bc5f-a100-45d4-8dc0-8fda6e179e37',
+    clientID: 'asasas.f9ad9721-fcc1-48f6-929f-1d718db3bf11', 
+    clientSecret : '0bd8bc5f-a100-45d4-8dc0-8fda6e179e37', 
     callbackURL: 'http://localhost:3000/callback',
 }, (accessToken, refreshToken, profile, cb) => {
       console.log('Access Token:', accessToken);
