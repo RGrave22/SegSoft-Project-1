@@ -31,7 +31,6 @@ const init = db.serialize(() => {
     clientId TEXT NOT NULL,
     clientSecret TEXT NOT NULL,
     appName TEXT NOT NULL,
-    redirectUri TEXT NOT NULL,
     developerEmail TEXT
   )`);
 
