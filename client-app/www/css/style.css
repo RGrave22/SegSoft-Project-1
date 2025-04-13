@@ -1,7 +1,7 @@
 body {
    margin: 0;
    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-   background: linear-gradient(to right, #6a11cb, #2575fc);
+   background: linear-gradient(to right, #F7374F, #88304E);
    color: white;
    display: flex;
    /*justify-content: center;*/
@@ -19,13 +19,14 @@ body {
 
  p{
      margin-top: 3rem;
+     justify-content: center;
  }
 
  input {
     margin-top: 10px;
     padding: 12px 24px;
     background-color: white;
-    color: #2575fc;
+    color: #F7374F;
     border-radius: 8px;
     text-decoration: none;
     font-weight: bold;
@@ -36,7 +37,7 @@ body {
     margin-top: 10rem;
     padding: 12px 24px;
     background-color: white;
-    color: #2575fc;
+    color: #F7374F;
     border-radius: 8px;
     text-decoration: none;
     font-weight: bold;
@@ -46,4 +47,33 @@ body {
  a:hover, input:hover {
    background-color: #e3e3e3;
  }
+
+/*div {*/
+/*    background-color: rgba(255, 255, 255, 0.1);*/
+/*    padding: 40px;*/
+/*    border-radius: 16px;*/
+/*    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);*/
+/*    backdrop-filter: blur(10px);*/
+/*    width: 300px;*/
+/*}*/
+
+.token-container {
+    width: 80%;
+    margin: 50px auto;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    font-family: Arial, sans-serif;
+    border-radius: 16px;
+}
+.token-container h1,
+.token-container h2,
+.token-container p {
+    margin: 10px 0;
+}
+.token-container p {
+    word-break: break-all; /* this makes long tokens wrap inside the box */
+    padding: 10px;
+    border-radius: 8px;
+    font-family: monospace;
+}
  

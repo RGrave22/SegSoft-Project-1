@@ -1,11 +1,24 @@
+
+
+const session = require('express-session');
+const dotenv = require('dotenv');
 const passport = require('passport');
 const OAuth2Strategy = require('passport-oauth2');
 const express = require('express');
 const path = require('path');
 
-
 const app = express();
 const port = 3000;
+const router = express.Router();
+
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
+router.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+}));
 
 // Configuração do OAuth2   
 passport.use('oauth2', new OAuth2Strategy({
@@ -21,6 +34,7 @@ passport.use('oauth2', new OAuth2Strategy({
       console.log('Refresh Token:', refreshToken);
       console.log('Profile:', profile);
       profile.accessToken = accessToken;
+      session.accessToken = accessToken;
     return cb(null, profile);
 }));
 
@@ -41,9 +55,30 @@ app.get('/callback',
       console.log('Authenticated user:', req.body);
         console.log('Authenticated response:', res.body);
       // Successful authentication
-        res.send(JSON.stringify(req.user));
+        //res.send(JSON.stringify(req.user));
+        console.log(JSON.stringify(req.user));
+        res.send(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+            <title>Generated token</title>
+            <link rel="stylesheet" type="text/css" href="/css/style.css">
+            </head>
+            <body>
+            <div class="token-container">
+                <h1>Welcome, you have been sucessfully authenticated</h1>
+                <h2>Acess token: </h2>
+                <p>${session.accessToken}</p>
+            </div>
+            </body>
+          </html>
+        `);
     }
   );
+
+app.get('/callback', (req, res) => {
+    res.sendFile(path.join(__dirname, 'www', 'index.html'));
+});
 
 
 app.use(express.static(path.join(__dirname, 'www')));

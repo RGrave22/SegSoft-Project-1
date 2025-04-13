@@ -37,7 +37,7 @@ router.get("/authorize", (req, res) => {
   req.session.redirect_uri = redirect_uri;
   req.session.client_id = client_id;
 
-  const val = validateIdAndUrl(client_id, redirect_uri);
+  const val = validateIdAndUrl(client_id);
 
   if(!val){
     res.status(401).send('Unauthorized client');

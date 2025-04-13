@@ -30,19 +30,6 @@ const verifyToken = (req, res, next) => {
  const handleTokenRequest = async(req, res) => {
   const { grant_type, code, redirect_uri, client_id, client_secret } = req.body;
 
-  //TODO VER A QUESTAO DO CLIENT_ID E SECRET VIREM NO Authorization header ou nao
-
-  // Extrair client_id e client_secret do cabeçalho Authorization
-  //   console.log(req.headers.authorization);
-  // const auth = req.headers.authorization;
-  // if (!auth || !auth.startsWith("Basic ")) {
-  //   return res.status(401).json({ error: "invalid_client" });
-  // }
-
-  // const base64Credentials = auth.split(" ")[1];
-  // const credentials = Buffer.from(base64Credentials, "base64").toString("ascii");
-  // const [client_id, client_secret] = credentials.split(":");
-
   console.log("Client ID:", client_id);
   console.log("Redirect URI:", redirect_uri);
 
@@ -101,19 +88,13 @@ const verifyToken = (req, res, next) => {
       }
       // Return the access token and other details
     });
+
     return res.json({
       access_token: accessToken,
       token_type: "Bearer",
       expires_in: 3600, // Token expiration time
     });
-    // return res.json({
-    //   access_token: accessToken,
-    //   token_type: "Bearer",
-    //   expires_in: 3600,
-    // });
   });
-
-  
 };
 
 async function  validateClient  (client_id, redirect_uri, client_secret)  {
@@ -122,12 +103,10 @@ async function  validateClient  (client_id, redirect_uri, client_secret)  {
       [client_id, redirect_uri], async (err, row) => {
 
       if (err) {
-
         console.error(err.message);
         return reject(err);
 
       } else if (row) {
-        
         console.log(client_secret);
         console.log(row.clientSecret);
         const match = await bcrypt.compare(client_secret, row.clientSecret);
@@ -139,17 +118,10 @@ async function  validateClient  (client_id, redirect_uri, client_secret)  {
         return resolve(true);
 
       } else {
-        
-
         return resolve(false);
-
       }
-
     });
-
-    
-  }); 
-  
+  });
 }
 
 

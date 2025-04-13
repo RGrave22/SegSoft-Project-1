@@ -5,14 +5,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 const registerClient = async(req, res) =>{
-   const { appName, redirectUri, developerEmail } = req.body;
+   const { appName, developerEmail } = req.body;
 
    if (!appName) {
       return res.status(400).json({ message: "App Name is required." });
     }
 
 
-   if (!appName || !redirectUri) {
+   if (!appName) {
      return res.status(400).json({ message: "App Name and Redirect URI are required." });
    }
  
@@ -21,11 +21,11 @@ const registerClient = async(req, res) =>{
    const clientSecretHash = bcrypt.hashSync(clientSecretPlain, 10);
  
    const sql = `
-     INSERT INTO client (clientId, clientSecret, appName, redirectUri, developerEmail)
+     INSERT INTO client (clientId, clientSecret, appName, developerEmail)
      VALUES (?, ?, ?, ?, ?)
    `;
  
-   db.run(sql, [clientId, clientSecretHash, appName, redirectUri, developerEmail], function (err) {
+   db.run(sql, [clientId, clientSecretHash, appName, developerEmail], function (err) {
      if (err) {
        console.error("Erro ao registar aplicação:", err.message);
        return res.status(500).json({ message: "Erro ao registar aplicação." });
@@ -40,10 +40,10 @@ const registerClient = async(req, res) =>{
 }
 
 
-function validateIdAndUrl (client_id, redirect_uri){
+function validateIdAndUrl (client_id){
   return new Promise((resolve, reject) =>{
-    db.get('SELECT * FROM client WHERE clientId = ? AND redirectUri = ?', 
-      [client_id, redirect_uri], (err, row) => {
+    db.get('SELECT * FROM client WHERE clientId = ?',
+      [client_id], (err, row) => {
 
       if (err) {
 
