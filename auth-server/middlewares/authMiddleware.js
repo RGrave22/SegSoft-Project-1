@@ -2,38 +2,13 @@ import jwt from "jsonwebtoken";
 import { db } from "../config/dbconnect.js";
 import bcrypt  from "bcryptjs";
 
-/**
-const verifyToken = (req, res, next) => {
-   const authHeader = req.headers.authorization;
- 
-   if (authHeader && authHeader.startsWith("Bearer ")) {
-     const token = authHeader.split(" ")[1];
- 
-     if (!token) {
-       return res.status(401).json({ message: "No token provided" });
-     }
- 
-     try {
-       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-       req.user = decoded;
-       console.log("The user is", req.user);
-       next();
-     } catch (error) {
-       return res.status(400).json({ message: "Invalid Token" });
-     }
-   } else {
-     return res.status(401).json({ message: "Auth header missing or malformed" });
-   }
- };
-  */
-
  const handleTokenRequest = async(req, res) => {
   const { grant_type, code, redirect_uri, client_id, client_secret } = req.body;
 
   console.log("Client ID:", client_id);
   console.log("Redirect URI:", redirect_uri);
 
-  const isValidClient = await validateClient(client_id, redirect_uri, client_secret);
+  const isValidClient = await validateClient(client_id, client_secret);
   
   if(!isValidClient){
     console.log("CLIENTE INVALIDO")
@@ -86,21 +61,21 @@ const verifyToken = (req, res, next) => {
         console.error("Error deleting the authorization co:", deleteErr.message);
         return res.status(500).json({ error: "server_error" });
       }
-      // Return the access token and other details
+
     });
 
     return res.json({
       access_token: accessToken,
       token_type: "Bearer",
-      expires_in: 3600, // Token expiration time
+      expires_in: 3600, 
     });
   });
 };
 
-async function  validateClient  (client_id, redirect_uri, client_secret)  {
+async function  validateClient  (client_id, client_secret)  {
   return new Promise((resolve, reject) =>{
-    db.get('SELECT * FROM client WHERE clientId = ? AND redirectUri = ?', 
-      [client_id, redirect_uri], async (err, row) => {
+    db.get('SELECT * FROM client WHERE clientId = ?', 
+      [client_id], async (err, row) => {
 
       if (err) {
         console.error(err.message);

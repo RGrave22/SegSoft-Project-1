@@ -24,10 +24,8 @@ router.use(session({
 passport.use('oauth2', new OAuth2Strategy({
     authorizationURL: 'http://localhost:9000/authorize',
     tokenURL: 'http://localhost:9000/token',
-    // clientID: 'my-client-id',
-    clientID: 'asasas.26a30d78-299c-46e7-bc3b-0d42fcc1723b',
-    // clientSecret: 'my-client-secret',
-    clientSecret : '4082eaa2-c866-4742-9ebc-313aa6c10a68',
+    clientID: 'asasas.f9ad9721-fcc1-48f6-929f-1d718db3bf11',
+    clientSecret : '0bd8bc5f-a100-45d4-8dc0-8fda6e179e37',
     callbackURL: 'http://localhost:3000/callback',
 }, (accessToken, refreshToken, profile, cb) => {
       console.log('Access Token:', accessToken);
@@ -54,8 +52,7 @@ app.get('/callback',
     (req, res) => {
       console.log('Authenticated user:', req.body);
         console.log('Authenticated response:', res.body);
-      // Successful authentication
-        //res.send(JSON.stringify(req.user));
+      
         console.log(JSON.stringify(req.user));
         res.send(`
           <!DOCTYPE html>

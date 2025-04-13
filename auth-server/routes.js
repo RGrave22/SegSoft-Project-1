@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 import { register, login } from "./controllers/authController.js";
 import { registerClient, validateIdAndUrl} from "./controllers/clientController.js";
 
-import {/**verifyToken, **/handleTokenRequest} from "./middlewares/authMiddleware.js";
+import {handleTokenRequest} from "./middlewares/authMiddleware.js";
 import jwt from "jsonwebtoken";
 import {db} from "./config/dbconnect.js";
 import session from "express-session";

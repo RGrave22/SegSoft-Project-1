@@ -55,16 +55,6 @@ const login = async (req, res) => {
         email: row.email,
       };
 
-     // Geração do token JWT
-    //  const token = jwt.sign(
-    //    { email: row.email },
-    //    process.env.JWT_SECRET,
-    //    { expiresIn: process.env.EXPIRES_IN_JWT || "1h" }
-    //  );
-    //  console.log(token);
- 
-     // Redirecionamento para a página de consentimento com parâmetros dinâmicos
-   //   return res.redirect(`/consent?client_id=${client_id}&redirect_uri=${encodeURIComponent(redirect_uri)}`);
       return res.redirect(`/consent`);
    });
  };

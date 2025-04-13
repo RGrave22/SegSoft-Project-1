@@ -22,7 +22,7 @@ const registerClient = async(req, res) =>{
  
    const sql = `
      INSERT INTO client (clientId, clientSecret, appName, developerEmail)
-     VALUES (?, ?, ?, ?, ?)
+     VALUES (?, ?, ?, ?)
    `;
  
    db.run(sql, [clientId, clientSecretHash, appName, developerEmail], function (err) {
@@ -31,11 +31,24 @@ const registerClient = async(req, res) =>{
        return res.status(500).json({ message: "Erro ao registar aplicação." });
      }
  
-     return res.status(201).json({
-       message: "Aplicação registada com sucesso.",
-       clientId,
-       clientSecret: clientSecretPlain, 
-     });
+     return res.send(`
+               <!DOCTYPE html>
+               <html>
+                 <head>
+                 <title>Aplication Successfully Signed Up</title>
+                 <link rel="stylesheet" type="text/css" href="/css/index.css">
+                 </head>
+                 <body>
+                 <div class="token-container">
+                     <h1>Aplication Successfully Signed Up</h1> 
+                     <h2>Client Id: </h2>
+                     <p>${clientId}</p>
+                     <h2>Client Secret: </h2>
+                     <p>${clientSecretPlain}</p> 
+                     </div>
+                 </body>
+               </html>
+             `);
    });
 }
 

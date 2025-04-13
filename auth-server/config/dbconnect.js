@@ -18,7 +18,6 @@ const db = new sqlite3.Database(dbPath,(err) =>{
    
 });
 
-// Tabelas iniciais
 const init = db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,9 +39,7 @@ const init = db.serialize(() => {
   redirect_uri TEXT NOT NULL,
   userId TEXT NOT NULL,
   createdAt DATETIME NOT NULL,
-  expiresIn INTEGER DEFAULT 600)`);
-  //client_id e redirect_uri tem de ser assim para receber os dados corretamente
- 
+  expiresIn INTEGER DEFAULT 600)`); 
 }
 );
 

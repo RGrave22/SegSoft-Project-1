@@ -6,8 +6,6 @@ import { fileURLToPath } from 'url';
 import router from './routes.js'; 
 import { db } from './config/dbconnect.js';
 
-
-
 const app = express();
 const port = process.env.PORT || 9000;
 
@@ -21,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Usa o router
+
 app.use("/", router);
 
 app.listen(port, () => {

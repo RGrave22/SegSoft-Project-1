@@ -27,13 +27,12 @@ const approveAuthorization = (req, res) => {
     return res.status(400).send("Missing session info (clientId or redirectUri)");
   }
 
-  // Verificar se o utilizador está autenticado
   if (!req.session.user) {
     return res.status(401).send("User not authenticated.");
   }
 
   const code = uuidv4(); 
-  const userId = req.session.user.email; // Agora `userId` será o email do utilizador
+  const userId = req.session.user.email; 
   const date = new Date();
 
   const sql = `

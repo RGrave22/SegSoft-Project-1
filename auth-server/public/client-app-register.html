@@ -1,27 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Register Your App - OAuth Developer Portal</title>
+  <title>Register Your App</title>
   <link rel="stylesheet" type="text/css" href="css/index.css" />
 </head>
+
 <body>
 <div class="login-container">
   <h2>Register Your Application</h2>
+
   <form action="/register-client" method="POST">
-<!--    <label for="appName">App Name</label>-->
     <input type="text" id="appName" placeholder="App Name" name="appName" required />
-
-<!--    <label for="redirectUri">Redirect URI</label>-->
-<!--    <input type="url" id="redirectUri" name="redirectUri" required />-->
-<!--    <div class="note">This is where we'll send the user after they authorize your app.</div>-->
-
-    <!--    <label for="developerEmail">Developer Contact Email</label>-->
     <input type="email" id="developerEmail" placeholder="Developer Contact Email" name="developerEmail" required />
-
     <button type="submit">Register App</button>
   </form>
+
 </div>
 </body>
 </html>
