@@ -13,6 +13,8 @@ const router = express.Router();
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+app.use(passport.initialize());
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -25,31 +27,32 @@ app.use(session({
  * To use the app you have to sign up your app first on '/', get your clientID and clientSecret 
  * and change them here in this passport method, after that you can sign up and login without any problem to get your acessToken      
  */
-// passport.use('oauth2', new OAuth2Strategy({
-//     authorizationURL: 'http://localhost:9000/authorize',
-//     tokenURL: 'http://localhost:9000/token',
-//     clientID: 'asasas.f9ad9721-fcc1-48f6-929f-1d718db3bf11',
-//     clientSecret : '0bd8bc5f-a100-45d4-8dc0-8fda6e179e37',
-//     callbackURL: 'http://localhost:3000/callback',
-// }, (accessToken, refreshToken, profile, cb) => {
-//       console.log('Access Token:', accessToken);
-//       console.log('Refresh Token:', refreshToken);
-//       console.log('Profile:', profile);
-//     return cb(null, profile);
-// }));
-
 passport.use('oauth2', new OAuth2Strategy({
-  authorizationURL: 'https://segsoft-project-1.onrender.com/authorize',
-  tokenURL: 'https://segsoft-project-1.onrender.com/token',
-  clientID: 'asasas.f9ad9721-fcc1-48f6-929f-1d718db3bf11',
-  clientSecret : '0bd8bc5f-a100-45d4-8dc0-8fda6e179e37',
-  callbackURL: 'https://segsoft-project-1-client.onrender.com/callback',
+    authorizationURL: 'http://localhost:9000/authorize',
+    tokenURL: 'http://localhost:9000/token',
+    clientID: 'asasas.f9ad9721-fcc1-48f6-929f-1d718db3bf11',
+    clientSecret : '0bd8bc5f-a100-45d4-8dc0-8fda6e179e37',
+    callbackURL: 'http://localhost:3000/callback',
 }, (accessToken, refreshToken, profile, cb) => {
-    console.log('Access Token:', accessToken);
-    console.log('Refresh Token:', refreshToken);
-    console.log('Profile:', profile);
+      console.log('Access Token:', accessToken);
+      console.log('Refresh Token:', refreshToken);
+      console.log('Profile:', profile);
+      profile.accessToken = accessToken;
     return cb(null, profile);
 }));
+
+// passport.use('oauth2', new OAuth2Strategy({
+//   authorizationURL: 'https://segsoft-project-1.onrender.com/authorize',
+//   tokenURL: 'https://segsoft-project-1.onrender.com/token',
+//   clientID: 'asasas.f9ad9721-fcc1-48f6-929f-1d718db3bf11',
+//   clientSecret : '0bd8bc5f-a100-45d4-8dc0-8fda6e179e37',
+//   callbackURL: 'https://segsoft-project-1-client.onrender.com/callback',
+// }, (accessToken, refreshToken, profile, cb) => {
+//     console.log('Access Token:', accessToken);
+//     console.log('Refresh Token:', refreshToken);
+//     console.log('Profile:', profile);
+//     return cb(null, profile);
+// }));
 
 
 app.get('/auth', passport.authenticate('oauth2'));
@@ -69,7 +72,7 @@ app.get('/callback',
       console.log('Authenticated user:', req.body);
         console.log('Authenticated response:', res.body);
       
-        console.log(req.user.accessToken);
+        console.log(JSON.stringify(req.user));
 
         req.session.accessToken = req.user.accessToken;
 
@@ -92,9 +95,9 @@ app.get('/callback',
     }
   );
 
-app.get('/callback', (req, res) => {
-    res.sendFile(path.join(__dirname, 'www', 'index.html'));
-});
+// app.get('/callback', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'www', 'index.html'));
+// });
 
 
 app.use(express.static(path.join(__dirname, 'www')));
