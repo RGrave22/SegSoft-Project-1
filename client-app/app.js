@@ -4,7 +4,7 @@ const passport = require('passport');
 const OAuth2Strategy = require('passport-oauth2');
 const express = require('express');
 const path = require('path');
-
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = 3000;
@@ -33,10 +33,11 @@ passport.use('oauth2', new OAuth2Strategy({
     clientSecret : '41d817f7-6381-443b-bad9-262815c920ce',
     callbackURL: 'http://localhost:3000/callback',
 }, (accessToken, refreshToken, profile, cb) => {
-      console.log('Access Token:', accessToken);
-      console.log('Refresh Token:', refreshToken);
-      console.log('Profile:', profile);
-      profile.accessToken = accessToken;
+        console.log('Access Token:', accessToken);
+        console.log('Refresh Token:', refreshToken);
+        console.log('Profile:', profile);
+        profile.accessToken = accessToken;
+        //const user = { accessToken, refreshToken };
     return cb(null, profile);
 }));
 

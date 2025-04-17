@@ -11,6 +11,7 @@ import bcrypt  from "bcryptjs";
   console.log("Client ID:", client_id);
   console.log("Redirect URI:", redirect_uri);
 
+  //SO PORQUE SIM APAGAR DEPOIS
   //const isValidClient = await validateClient(client_id, client_secret);
   
   // if(!isValidClient){
@@ -142,7 +143,7 @@ function validateIdAndUrl(req, res, next) {
 }
 
 
-
+//SO PORQUE SIM APAGAR DEPOIS
 async function  validateClient  (client_id, client_secret)  {
   return new Promise((resolve, reject) =>{
     db.get('SELECT * FROM client WHERE clientId = ?', 
