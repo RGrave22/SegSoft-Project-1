@@ -93,6 +93,7 @@ const registerClient = async(req, res) =>{
                  <div class="token-container">
                      <h1>Aplication Successfully Signed Up</h1>
                      <h2>Check you email account to get your OAuth2.0 credentials</h2>
+                     <h3>Sometimes the email goes to spam</h3>
                      </div>
                  </body>
                </html>
