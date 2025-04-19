@@ -2,6 +2,7 @@ import {db} from "../config/dbconnect.js";
 import bcrypt  from "bcryptjs";
 import jwt from "jsonwebtoken";
 import session from "express-session";
+import path from "path";
 
 
 
