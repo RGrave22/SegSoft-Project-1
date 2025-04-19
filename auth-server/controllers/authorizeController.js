@@ -7,11 +7,11 @@ const approveAuthorization = (req, res) => {
   const { client_id, redirect_uri, state } = req.session;
 
   if (!client_id || !redirect_uri) {
-    return res.status(400).send("Missing session info (clientId or redirectUri)");
+    return res.status(400).send("Missing required info");
   }
 
   if (!req.session.user) {
-    return res.status(401).send("User not authenticated.");
+    return res.status(401).send("Invalid session");
   }
 
   const code = uuidv4(); 
@@ -33,7 +33,7 @@ const approveAuthorization = (req, res) => {
     redirectUrl.searchParams.set("code", code);
     if (state) redirectUrl.searchParams.set("state", state);
 
-    console.log("Redirecting");
+    console.log("Redirecting to");
     console.log(redirectUrl);
 
     return res.redirect(redirectUrl.toString());

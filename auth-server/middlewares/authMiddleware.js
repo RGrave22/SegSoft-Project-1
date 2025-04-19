@@ -34,12 +34,12 @@ import bcrypt  from "bcryptjs";
 
   db.get(sql, [code, client_id, redirect_uri], (err, row) => {
     if (err) {
-      console.error("Erro ao procurar código:", err.message);
+      console.error("Error searching code:", err.message);
       return res.status(500).json({ error: "server_error" });
     }
 
     if (!row) {
-      return res.status(400).json({ error: "invalid_grant" });
+      return res.status(400).json({ error: "Invalid authentication credentials" });
     }
 
     const createdAt = new Date(row.createdAt);
@@ -47,7 +47,7 @@ import bcrypt  from "bcryptjs";
     const now = new Date();
 
     if ((now - createdAt) / 1000 > expiresIn) {
-      return res.status(400).json({ error: "expired_code" });
+      return res.status(400).json({ error: "Invalid authentication credentials" });
     }
 
     const payload = {
@@ -82,10 +82,10 @@ async function validateClientMiddleware(req, res, next) {
     try {
         const { client_id, client_secret } = req.body;
 
-        console.log("We are in middleware");
+        console.log("Checking client credentials");
 
         if (!client_id || !client_secret) {
-            return res.status(400).json({ error: 'client_id e client_secret são obrigatórios' });
+            return res.status(400).json({ error: 'Invalid credentials' });
         }
 
         db.get('SELECT * FROM client WHERE clientId = ?', [client_id], async (err, row) => {
@@ -95,21 +95,20 @@ async function validateClientMiddleware(req, res, next) {
             }
 
             if (!row) {
-                return res.status(401).json({ error: 'Client Not Found' });
+                return res.status(401).json({ error: 'Invalid client credentials' });
             }
 
             try {
                 const match = await bcrypt.compare(client_secret, row.clientSecret);
 
                 if (!match) {
-                    return res.status(401).json({ error: 'Invalide Client-Secret' });
+                    return res.status(401).json({ error: 'Invalid client credentials' });
                 }
-
 
                 next();
             } catch (bcryptErr) {
                 console.error('Error in bcrypt:', bcryptErr.message);
-                return res.status(500).json({ error: 'Error validating client credentials' });
+                return res.status(500).json({ error: 'Error validating credentials' });
             }
         });
 
@@ -125,7 +124,7 @@ function validateIdAndUrl(req, res, next) {
 
 
     if (!client_id || !redirect_uri) {
-        return res.status(400).json({ error: 'client_id is required' });
+        return res.status(400).json({ error: 'Invalid client credentials' });
     }
 
     db.get('SELECT * FROM client WHERE clientId = ? AND redirect_uri = ?', [client_id, redirect_uri], (err, row) => {
@@ -135,7 +134,7 @@ function validateIdAndUrl(req, res, next) {
         }
 
         if (!row) {
-            return res.status(401).json({ error: 'Invalid client_id' });
+            return res.status(401).json({ error: 'Unauthorized client' });
         }
 
         next();

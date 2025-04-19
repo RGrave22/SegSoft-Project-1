@@ -34,7 +34,7 @@ const login = async (req, res) => {
    console.log(redirect_uri);
 
    if (!email || !password || !client_id || !redirect_uri) {
-     return res.status(401).json({ error: "Missing required fields (email, password, client_id, redirect_uri)" });
+     return res.status(401).json({ error: "Missing required fields" });
    }
  
    const sql = "SELECT * FROM user WHERE email = ?";
