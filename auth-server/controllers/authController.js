@@ -9,6 +9,10 @@ import path from "path";
 const register = async(req,res) => {
    const {email, password} = req.body;
 
+   if (!email || !password) {
+      return res.status(401).json({ error: "Missing required fields" });
+   }
+
    try {
       const hashedPassword = await bcrypt.hash(password, 10);
       const sql = 'Insert into user (email,password) values (?,?)';
