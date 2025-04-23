@@ -43,7 +43,6 @@ So we are informing you to expect some loading time from the Cloud platform when
       
         console.log("Token: " + req.user.accessToken);
 
-        //here you can handle the token the way you want
         res.send(Your app next page)
     }
   );
