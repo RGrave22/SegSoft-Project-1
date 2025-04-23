@@ -15,7 +15,6 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-//app.use(express.static(path.join(__dirname, 'public')));
 
 const registerClient = async(req, res) =>{
    const { appName, developerEmail, redirectUri } = req.body;
@@ -47,10 +46,10 @@ const registerClient = async(req, res) =>{
        console.log(process.env.EMAIL_PASSWORD);
 
        const transporter = nodemailer.createTransport({
-           service: 'gmail', // You can replace this with another service like SendGrid or Mailgun
+           service: 'gmail', 
            auth: {
                user: 'oauthdevs@gmail.com',
-               pass: process.env.EMAIL_PASSWORD    // Replace with your email password or an app-specific password
+               pass: process.env.EMAIL_PASSWORD    
            },
            tls: {
                rejectUnauthorized: false
@@ -74,7 +73,6 @@ const registerClient = async(req, res) =>{
             `,
        };
 
-       // Send the email
        try {
            await transporter.sendMail(mailOptions);
            console.log('Email sent successfully!');

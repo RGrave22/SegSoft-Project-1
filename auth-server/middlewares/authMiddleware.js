@@ -11,14 +11,6 @@ import bcrypt  from "bcryptjs";
   console.log("Client ID:", client_id);
   console.log("Redirect URI:", redirect_uri);
 
-  //SO PORQUE SIM APAGAR DEPOIS
-  //const isValidClient = await validateClient(client_id, client_secret);
-  
-  // if(!isValidClient){
-  //   console.log("CLIENTE INVALIDO")
-  //   return res.status(401).json({ error: "Unauthorized Client" });
-  // }
-
   if (grant_type !== "authorization_code") {
     return res.status(400).json({ error: "unsupported_grant_type" });
   }
@@ -141,34 +133,6 @@ function validateIdAndUrl(req, res, next) {
     });
 }
 
-
-//SO PORQUE SIM APAGAR DEPOIS
-async function  validateClient  (client_id, client_secret)  {
-  return new Promise((resolve, reject) =>{
-    db.get('SELECT * FROM client WHERE clientId = ?', 
-      [client_id], async (err, row) => {
-
-      if (err) {
-        console.error(err.message);
-        return reject(err);
-
-      } else if (row) {
-        console.log(client_secret);
-        console.log(row.clientSecret);
-        const match = await bcrypt.compare(client_secret, row.clientSecret);
-        
-        if(!match){
-          return resolve(false);
-        }
-        
-        return resolve(true);
-
-      } else {
-        return resolve(false);
-      }
-    });
-  });
-}
 
 
  export { handleTokenRequest, validateClientMiddleware, validateIdAndUrl };

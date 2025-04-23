@@ -23,7 +23,7 @@ app.use(session({
 
 /**
  * LOCAL HOST
- * To use the app you have to sign up your app first on '/', get your clientID and clientSecret 
+ * To use the app you have to sign up your app first on authorization server side register , get your clientID and clientSecret 
  * and change them here in this passport method, after that you can sign up and login without any problem to get your acessToken      
  */
 // passport.use('oauth2', new OAuth2Strategy({

@@ -34,12 +34,6 @@ router.get("/authorize", validateIdAndUrl, (req, res) => {
   req.session.redirect_uri = redirect_uri;
   req.session.client_id = client_id;
 
-  //SO PORQUE SIM TIRAR DEPOIS
-  //const val = validateIdAndUrl(client_id);
-
-  // if(!val){
-  //   res.status(401).send('Unauthorized client');
-  // }
 
   res.sendFile(path.join(__dirname, "public", "login.html"));
 });
