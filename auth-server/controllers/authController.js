@@ -2,11 +2,13 @@ import {db} from "../config/dbconnect.js";
 import bcrypt  from "bcryptjs";
 import jwt from "jsonwebtoken";
 import session from "express-session";
+import path from "path";
 
 
 
 const register = async(req,res) => {
    const {email, password} = req.body;
+
    try {
       const hashedPassword = await bcrypt.hash(password, 10);
       const sql = 'Insert into user (email,password) values (?,?)';
@@ -33,7 +35,7 @@ const login = async (req, res) => {
    console.log(redirect_uri);
 
    if (!email || !password || !client_id || !redirect_uri) {
-     return res.status(401).json({ error: "Missing required fields (email, password, client_id, redirect_uri)" });
+     return res.status(401).json({ error: "Missing required fields" });
    }
  
    const sql = "SELECT * FROM user WHERE email = ?";

@@ -2,33 +2,16 @@ import { db } from "../config/dbconnect.js";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 
-const renderConsentPage = (req, res) => {
-  const { client_id, redirect_uri, state } = req.query;
-
-  if (!client_id || !redirect_uri) {
-    return res.status(400).send("Missing client_id or redirect_uri");
-  }
-
-  req.session.client_id = client_id;
-  req.session.redirect_uri = redirect_uri;
-  req.session.state = state;
-
-  res.render("consent", {
-    client_id,
-    redirect_uri,
-    state,
-  });
-};
 
 const approveAuthorization = (req, res) => {
   const { client_id, redirect_uri, state } = req.session;
 
   if (!client_id || !redirect_uri) {
-    return res.status(400).send("Missing session info (clientId or redirectUri)");
+    return res.status(400).send("Missing required info");
   }
 
   if (!req.session.user) {
-    return res.status(401).send("User not authenticated.");
+    return res.status(401).send("Invalid session");
   }
 
   const code = uuidv4(); 
@@ -50,7 +33,7 @@ const approveAuthorization = (req, res) => {
     redirectUrl.searchParams.set("code", code);
     if (state) redirectUrl.searchParams.set("state", state);
 
-    console.log("Redirecting");
+    console.log("Redirecting to");
     console.log(redirectUrl);
 
     return res.redirect(redirectUrl.toString());
@@ -58,9 +41,8 @@ const approveAuthorization = (req, res) => {
 };
 
 
-
 const denyAuthorization = (req, res) => {
   res.status(403).send("Access denied by user.");
 };
 
-export { renderConsentPage, approveAuthorization, denyAuthorization };
+export { approveAuthorization, denyAuthorization };

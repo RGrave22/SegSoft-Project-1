@@ -31,7 +31,7 @@ body {
  }
  
  input[type="text"],
- input[type="password"],[type = "email"] {
+ input[type="password"],[type = "email"],[type = "uri"] {
    padding: 12px;
    margin: 10px 0;
    border: none;

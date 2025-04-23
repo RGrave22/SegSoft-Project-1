@@ -29,6 +29,7 @@ const init = db.serialize(() => {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     clientId TEXT NOT NULL,
     clientSecret TEXT NOT NULL,
+    redirect_uri TEXT NOT NULL,
     appName TEXT NOT NULL,
     developerEmail TEXT
   )`);

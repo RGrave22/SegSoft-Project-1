@@ -8,13 +8,10 @@
 <body>
   <div class="login-container">
     <h1>Authorization Request</h1>
-    <p><strong>This application is requesting permission to access your account</strong></p>
+    <p><strong>The Client Application is requesting permission to access your account</strong></p>
 
     <form action="/consent" method="POST" style="margin-bottom: 15px;">
-      <input type="hidden" name="client_id" value="{{client_id}}">
-      <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
-      <input type="hidden" name="state" value="{{state}}">
-      <button type="submit">Approve</button>
+    <button type="submit">Approve</button>
     </form>
 
     <form action="/deny" method="POST">

@@ -1,11 +1,10 @@
-
-
 const session = require('express-session');
 const dotenv = require('dotenv');
 const passport = require('passport');
 const OAuth2Strategy = require('passport-oauth2');
 const express = require('express');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = 3000;
@@ -30,14 +29,15 @@ app.use(session({
 passport.use('oauth2', new OAuth2Strategy({
     authorizationURL: 'http://localhost:9000/authorize',
     tokenURL: 'http://localhost:9000/token',
-    clientID: 'asasas.f9ad9721-fcc1-48f6-929f-1d718db3bf11',
-    clientSecret : '0bd8bc5f-a100-45d4-8dc0-8fda6e179e37',
+    clientID: 'boaspessoal.923773de-ccc3-4082-9652-cb4fe49f82e3',
+    clientSecret : '41d817f7-6381-443b-bad9-262815c920ce',
     callbackURL: 'http://localhost:3000/callback',
 }, (accessToken, refreshToken, profile, cb) => {
-      console.log('Access Token:', accessToken);
-      console.log('Refresh Token:', refreshToken);
-      console.log('Profile:', profile);
-      profile.accessToken = accessToken;
+        console.log('Access Token:', accessToken);
+        console.log('Refresh Token:', refreshToken);
+        console.log('Profile:', profile);
+        profile.accessToken = accessToken;
+        //const user = { accessToken, refreshToken };
     return cb(null, profile);
 }));
 
@@ -51,16 +51,9 @@ passport.use('oauth2', new OAuth2Strategy({
 //     console.log('Access Token:', accessToken);
 //     console.log('Refresh Token:', refreshToken);
 //     console.log('Profile:', profile);
+//     profile.accessToken = accessToken;
 //     return cb(null, profile);
 // }));
-
-
-app.get('/auth', passport.authenticate('oauth2'));
-
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'www', 'index.html'));
-});
 
 
 app.get('/callback',
@@ -69,10 +62,8 @@ app.get('/callback',
       session: false
     }),
     (req, res) => {
-      console.log('Authenticated user:', req.body);
-        console.log('Authenticated response:', res.body);
       
-        console.log(JSON.stringify(req.user));
+        console.log("Token: " + req.user.accessToken);
 
         req.session.accessToken = req.user.accessToken;
 
@@ -95,10 +86,12 @@ app.get('/callback',
     }
   );
 
-// app.get('/callback', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'www', 'index.html'));
-// });
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'www', 'index.html'));
+});
+
+app.get('/auth', passport.authenticate('oauth2'));
 
 app.use(express.static(path.join(__dirname, 'www')));
 
