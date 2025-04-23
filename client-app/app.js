@@ -44,8 +44,8 @@ app.use(session({
 passport.use('oauth2', new OAuth2Strategy({
   authorizationURL: 'https://segsoft-project-1.onrender.com/authorize',
   tokenURL: 'https://segsoft-project-1.onrender.com/token',
-  clientID: 'asasas.f9ad9721-fcc1-48f6-929f-1d718db3bf11',
-  clientSecret : '0bd8bc5f-a100-45d4-8dc0-8fda6e179e37',
+  clientID: 'EduardoRodrigo.d944f027-0788-41a5-983b-37edbbed12fe',
+  clientSecret : '71801e5d-998d-45b5-aa93-29f1f0dc0819',
   callbackURL: 'https://segsoft-project-1-client.onrender.com/callback',
 }, (accessToken, refreshToken, profile, cb) => {
     console.log('Access Token:', accessToken);
