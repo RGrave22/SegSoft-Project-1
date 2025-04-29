@@ -4,6 +4,12 @@
 We created this OAuth2.0 system as a Software Security course project,
 giving this fact we hosted our system in a free Cloud application platform.
 So we are informing you to expect some loading time from the Cloud platform when trying to access our server. 
+Note: we have created a default client on the deploy of the website but you can change the id and the secret on your own version of the project if you want that. 
+
+Authorization Server: [here](https://segsoft-project-1.onrender.com)
+
+Client App: [here](https://segsoft-project-1-client.onrender.com)
+
 
 ## How to use our OAuth2.0 system
 
