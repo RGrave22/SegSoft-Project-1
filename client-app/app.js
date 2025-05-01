@@ -41,12 +41,45 @@ app.use(session({
 //     return cb(null, profile);
 // }));
 
+//Strategy de deploy normal
+// passport.use('oauth2', new OAuth2Strategy({
+//   authorizationURL: 'https://segsoft-project-1.onrender.com/authorize',
+//   tokenURL: 'https://segsoft-project-1.onrender.com/token',
+//   clientID: 'ClientAppDefault.c4efe95b-b0a5-4593-a9dd-1fd7c7d46495',
+//   clientSecret : '59b96360-c9d5-4a81-847c-3596ed3e534b',
+//   callbackURL: 'https://segsoft-project-1-client.onrender.com/callback',
+// }, (accessToken, refreshToken, profile, cb) => {
+//     console.log('Access Token:', accessToken);
+//     console.log('Refresh Token:', refreshToken);
+//     console.log('Profile:', profile);
+//     profile.accessToken = accessToken;
+//     return cb(null, profile);
+// }));
+
+
+//Strategy para 69934_70004
+// passport.use('oauth2', new OAuth2Strategy({
+//   authorizationURL: 'https://ss-project1.onrender.com/auth/login',
+//   tokenURL: 'https://ss-project1.onrender.com/auth/api/token',
+//   clientID: '2b72eff9-65db-48ec-86d8-6bd445264ccf',
+//   clientSecret : '7289bdd4-b5ab-4906-b64c-1e6fd64996fd',
+//   callbackURL: 'http://localhost:3000/callback',
+// }, (accessToken, refreshToken, profile, cb) => {
+//     console.log('Access Token:', accessToken);
+//     console.log('Refresh Token:', refreshToken);
+//     console.log('Profile:', profile);
+//     profile.accessToken = accessToken;
+//     return cb(null, profile);
+// }));
+
+
+//Strategy para 70567_70568
 passport.use('oauth2', new OAuth2Strategy({
-  authorizationURL: 'https://segsoft-project-1.onrender.com/authorize',
-  tokenURL: 'https://segsoft-project-1.onrender.com/token',
-  clientID: 'ClientAppDefault.c4efe95b-b0a5-4593-a9dd-1fd7c7d46495',
-  clientSecret : '59b96360-c9d5-4a81-847c-3596ed3e534b',
-  callbackURL: 'https://segsoft-project-1-client.onrender.com/callback',
+    authorizationURL: 'https://segsoftp1.onrender.com/authorize',
+    tokenURL: 'https://segsoftp1.onrender.com/token',
+    clientID: 'Ola123',
+    clientSecret : 'secret123',
+    callbackURL: 'http://localhost:3000/callback',
 }, (accessToken, refreshToken, profile, cb) => {
     console.log('Access Token:', accessToken);
     console.log('Refresh Token:', refreshToken);
@@ -54,6 +87,7 @@ passport.use('oauth2', new OAuth2Strategy({
     profile.accessToken = accessToken;
     return cb(null, profile);
 }));
+
 
 
 app.get('/callback',
